@@ -1,13 +1,10 @@
 from django.urls import path
-from .views import (
-    PostListCreateView, PostDetailView, CommentListCreateView,
-    top_three_posts, most_active_user
-)
+from .views import PostListCreateAPIView, PostRetrieveAPIView, CommentListCreateAPIView, TopPostsAPIView, MostActiveUserAPIView
 
 urlpatterns = [
-    path('posts/', PostListCreateView.as_view(), name='post-list-create'),
-    path('posts/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
-    path('posts/<int:post_id>/comments/', CommentListCreateView.as_view(), name='post-comments'),
-    path('top-posts/', top_three_posts, name='top-three-posts'),
-    path('most-active-user/', most_active_user, name='most-active-user'),
+    path('posts/', PostListCreateAPIView.as_view(), name='posts-list-create'),
+    path('posts/<int:pk>/', PostRetrieveAPIView.as_view(), name='posts-detail'),
+    path('posts/<int:post_id>/comments/', CommentListCreateAPIView.as_view(), name='comments-list-create'),
+    path('top-posts/', TopPostsAPIView.as_view(), name='top-posts'),
+    path('most-active-user/', MostActiveUserAPIView.as_view(), name='most-active-user'),
 ]
