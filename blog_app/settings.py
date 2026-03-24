@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-o$7r_a)&%yrsb6edq576qw@eb+8%sge&xz8%csdc0_17w6o3==
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'blogapp-backend-h1tv.onrender.com',  # your Render URL
+    'localhost',
+    '127.0.0.1',
+]
 
 
 # Application definition
