@@ -1,27 +1,19 @@
-from django.shortcuts import render
 from rest_framework import generics
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.db.models import Count
-from .models import User, Post, Comment
+from .models import Post, Comment, User
 from .serializers import PostSerializer, CommentSerializer, UserSerializer
+from django.db.models import Count
 
-# -------------------
-# Posts API
-# -------------------
-class PostListCreateView(generics.ListCreateAPIView):
-    queryset = Post.objects.all().order_by('-created_at')
-    serializer_class = PostSerializer
-
-
-class PostDetailView(generics.RetrieveAPIView):
+# Posts
+class PostListCreateAPIView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
-# -------------------
-# Comments API
-# -------------------
-class CommentListCreateView(generics.ListCreateAPIView):
+class PostRetrieveAPIView(generics.RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+# Comments
+class CommentListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
 
     def get_queryset(self):
@@ -29,26 +21,17 @@ class CommentListCreateView(generics.ListCreateAPIView):
         return Comment.objects.filter(post_id=post_id).order_by('-created_at')
 
     def perform_create(self, serializer):
-        serializer.save(post_id=self.kwargs['post_id'])
+        serializer.save(user=self.request.user, post_id=self.kwargs['post_id'])
 
+# Custom endpoints
+class TopPostsAPIView(generics.ListAPIView):
+    serializer_class = PostSerializer
 
-# -------------------
-# Custom Endpoints
-# -------------------
-@api_view(['GET'])
-def top_three_posts(request):
-    posts = Post.objects.annotate(comment_count=Count('comments')) \
-        .order_by('-comment_count')[:3]
-    data = [{"title": post.title, "num_comments": post.comment_count} for post in posts]
-    return Response(data)
+    def get_queryset(self):
+        return Post.objects.annotate(comment_count=Count('comment')).order_by('-comment_count')[:3]
 
+class MostActiveUserAPIView(generics.ListAPIView):
+    serializer_class = UserSerializer
 
-@api_view(['GET'])
-def most_active_user(request):
-    user = User.objects.annotate(total_comments=Count('comments')) \
-        .order_by('-total_comments').first()
-    if user:
-        data = {"name": user.name, "total_comments": user.total_comments}
-    else:
-        data = {}
-    return Response(data)
+    def get_queryset(self):
+        return User.objects.annotate(total_comments=Count('comment')).order_by('-total_comments')[:1]
