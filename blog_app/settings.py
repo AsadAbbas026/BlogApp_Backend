@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-o$7r_a)&%yrsb6edq576qw@eb+8%sge&xz8%csdc0_17w6o3=='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     'blogapp-backend-h1tv.onrender.com',  # your Render URL
